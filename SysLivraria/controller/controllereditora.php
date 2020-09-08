@@ -1,21 +1,25 @@
 <?php
 if (!empty($_POST)) {
-    if (isset($_POST['acao']) && isset($_POST['nome']) && isset($_POST['email'])){
-        if (!empty($_POST['acao']) && !empty($_POST['nome']) && !empty($_POST['email'])) {
+    if (isset($_POST['acao']) && isset($_POST['nome']) && isset($_POST['email']) && isset($_POST['telefone']) && isset($_POST['endereco']) && isset($_POST['contato'])){
+        if (!empty($_POST['acao']) && !empty($_POST['nome']) && !empty($_POST['contato']) && !empty($_POST['telefone']) && !empty($_POST['endereco']) && !empty($_POST['contato'])) {
             $acao = $_POST['acao'];
             $nome = $_POST['nome'];
             $email = $_POST['email'];
+            $telefone = $_POST['telefone'];
+            $endereco = $_POST['endereco'];
+            $contato = $_POST['contato'];
 
-            include("../model/Autor.php");
-            $autor = new Autor();
+
+            include("../model/Editora.php");
+            $autor = new Editora();
 
             if($acao == "adicionar"){
-                $resultado= $autor->adicionarAutor($nome, $email); 
+                $resultado= $autor->adicionarEditora($nome, $email, $telefone, $endereco, $contato); 
                 echo $resultado;
             }elseif($acao== "alterar"){
-                if (!empty($_POST['autor']) && isset($_POST['autor'])){
-                    $id = $_POST['autor'];
-                    $resultado = $autor->alterarAutor($id, $nome, $email);      
+                if (!empty($_POST['editora']) && isset($_POST['editora'])){
+                    $id = $_POST['editora'];
+                    $resultado = $autor->alterarEditora($id, $nome, $email, $telefone, $endereco, $contato);      
                     echo $resultado;    
                 }
             }
@@ -26,14 +30,14 @@ if (!empty($_POST)) {
 } 
 elseif(!empty($_GET)){
     if(!empty($_GET['acao'])
-     && isset($_GET['acao']) && !empty($_GET['autor']) && isset($_GET['autor'])){
+     && isset($_GET['acao']) && !empty($_GET['editora']) && isset($_GET['editora'])){
         $acao = $_GET['acao'];
-        $id = $_GET['autor'];
+        $id = $_GET['editora'];
 
         if ($acao ==  "excluir"){
-            include("../model/Autor.php");
-            $autor = new Autor();
-            $resultado = $autor->excluirAutor($id);
+            include("../model/Editora.php");
+            $editora = new Editora();
+            $resultado = $editora->excluirEditora($id);
             echo $resultado;
         }
     }
