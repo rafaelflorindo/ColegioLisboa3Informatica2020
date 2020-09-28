@@ -9,10 +9,11 @@
 <?php
 if(!empty($_GET)){
     if(!empty($_GET['autor']) && isset($_GET['autor'])){
-        $id = $_GET['autor']; 
+        $id = (int)$_GET['autor']; 
         include("../model/Autor.php");
         $autor = new Autor();
         $retonoAutor = $autor->resgatarAutor($id);
+
         ?>
     <div><h2>ALTERAR AUTOR</h2></div>
     <form action="../controller/controllerAutor.php" method="post">

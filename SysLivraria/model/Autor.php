@@ -1,6 +1,6 @@
 <?php
     class Autor{
-        private $nome, $email, $dataCadastro;
+        private $id, $nome, $email, $dataCadastro;
         private $conn;
 
         public function __construct()
@@ -13,6 +13,7 @@
         }
 
         private function setId($id):bool{//este método é acessivel apenas pela própria classe
+            //$id = (int)$id;
             if(is_int($id)){
                 $this->id= $id;
                 return true;
@@ -42,69 +43,75 @@
         private function getId():int{
             return $this->id;
         }
-
-        public function adicionarAutor($nome, $email):int{
+        public function adicionarAutor($nome, $email):int
+        {
             $this->setNome($nome);
             $this->setEmail($email);
-            
             $this->dataCadastro = date("Y-m-d");
 
-            $sql = "INSERT INTO autor (nome, email, dataCadastro) 
-            values ('{$this->getNome()}','{$this->getEmail()}','{$this->dataCadastro}')";
-
-            $results = $this->conn->query($sql);
+            $stmt = $this->conn->prepare("INSERT INTO autor (nome, email, dataCadastro) 
+            values (?,?,?)");
+            $stmt->bind_param("sss", $this->nome, $this->email, $this->dataCadastro);
+            $results = $stmt->execute();
             if ($results > 0)
              return 1;
             else
              return 0;
         }
-        public function alterarAutor($id, $nome, $email):int{
+        public function alterarAutor($id, $nome, $email):int
+        {
+
             $this->setNome($nome);
             $this->setEmail($email);
             $this->setId($id);
 
-            $sql = "UPDATE autor SET nome ='{$this->getNome()}', email='{$this->getEmail()}' 
-            WHERE id = {$this->getId()}";
-           
-            $results = $this->conn->query($sql);
+            $stmt = $this->conn->prepare("UPDATE autor SET nome=?, email=?, dataCadastro=? WHERE id=?");
+            $stmt->bind_param("sssd", $this->nome, $this->email, $this->dataCadastro, $this->id);
+            $results = $stmt->execute();
             
             if ($results > 0)
                 return 1;
             else
                 return 0;
         }
-
-        public function excluirAutor($id):int{
+        
+        public function excluirAutor($id):int
+        {
             $this->setId($id);
-            $sql = "DELETE FROM autor WHERE id='{$this->getId()}'";
-            $results = $this->conn->query($sql);
+            $stmt = $this->conn->prepare("DELETE FROM autor WHERE id=?");
+            $stmt->bind_param("d",$this->id);
+            $results = $stmt->execute();
+            
             if ($results > 0)
                 return 1;
             else
                 return 0;
         }
 
-        public function listarAutor():array{
-            $sql = "SELECT * FROM autor ORDER BY nome ASC";
+        public function listarAutor():array
+        {
             
-            $retorno = $this->conn->query($sql);
+            $stmt = $this->conn->prepare("SELECT * FROM autor ORDER BY nome ASC");
+            $stmt->execute();
 
-            $lista = array();//array dinâmico para armazenar os registos da tabela
-            
-            while($linha = $retorno->fetch_assoc()){ 
+            $result = $stmt->get_result();
+            $lista = array();
+            while($linha = $result->fetch_assoc()){ 
                 $lista[] = $linha;
             }
             return $lista;
         }
 
-        public function resgatarAutor($id):array{
+        public function resgatarAutor($id):array
+        {
             $this->setId($id);
+            $stmt = $this->conn->prepare("SELECT * FROM autor WHERE id = ?");
+            $stmt->bind_param("d", $this->id);
+            $stmt->execute();
 
-            $sql = "SELECT * FROM autor WHERE id = '{$this->getId()}'";
-            
-            $retorno = $this->conn->query($sql);
-            
-            while($linha = $retorno->fetch_assoc()){ 
+            $result = $stmt->get_result();
+            $lista = array();
+            while($linha = $result->fetch_assoc()){ 
                 $lista[] = $linha;
             }
             return $lista;

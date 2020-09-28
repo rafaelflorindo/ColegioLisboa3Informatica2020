@@ -14,7 +14,7 @@ if (!empty($_POST)) {
                 echo $resultado;
             }elseif($acao== "alterar"){
                 if (!empty($_POST['autor']) && isset($_POST['autor'])){
-                    $id = $_POST['autor'];
+                    $id = (int)$_POST['autor']; 
                     $resultado = $autor->alterarAutor($id, $nome, $email);      
                     echo $resultado;    
                 }
@@ -28,7 +28,7 @@ elseif(!empty($_GET)){
     if(!empty($_GET['acao'])
      && isset($_GET['acao']) && !empty($_GET['autor']) && isset($_GET['autor'])){
         $acao = $_GET['acao'];
-        $id = $_GET['autor'];
+        $id = (int)$_GET['autor']; 
 
         if ($acao ==  "excluir"){
             include("../model/Autor.php");
